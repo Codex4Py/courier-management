@@ -1,0 +1,139 @@
+{% extends 'couriers/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Status List for Courier - {{ courier.id }}</h2>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Courier Information</h4>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Tracking ID</th>
+                        <td>{{ courier.tracking_id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Created By</th>
+                        <td>{{ courier.created_by.full_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Destination</th>
+                        <td>{{ courier.destination }}</td>
+                    </tr>
+                    <tr>
+                        <th>Order Type</th>
+                        <td>{{ courier.order_type }}</td>
+                    </tr>
+                    <tr>
+                        <th>Delivery Type</th>
+                        <td>{{ courier.delivery_type }}</td>
+                    </tr>
+                    <tr>
+                        <th>Order Date</th>
+                        <td>{{ courier.order_date }}</td>
+                    </tr>
+                    <tr>
+                        <th>Package Name</th>
+                        <td>{{ courier.package_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Weight</th>
+                        <td>{{ courier.weight }}</td>
+                    </tr>
+                    <tr>
+                        <th>Reference</th>
+                        <td>{{ courier.reference }}</td>
+                    </tr>
+                    <tr>
+                        <th>Instruction</th>
+                        <td>{{ courier.instruction }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="col-md-6">
+            <h4>Vendor/Sender Details</h4>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Vendor Name</th>
+                        <td>{{ courier.vendor_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Vendor Phone</th>
+                        <td>{{ courier.vendor_name.vendor_phone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Vendor Address</th>
+                        <td>{{ courier.vendor_name.vendor_address }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4>Customer Details</h4>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Customer Name</th>
+                        <td>{{ courier.customer_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Customer Address</th>
+                        <td>{{ courier.customer_address }}</td>
+                    </tr>
+                    <tr>
+                        <th>Customer Phone</th>
+                        <td>{{ courier.customer_phone }}</td>
+                    </tr>
+                    <tr>
+                        <th>Customer Alt Phone</th>
+                        <td>{{ courier.customer_alt_phone }}</td>
+                    </tr>
+                    <tr>
+                        <th>COD Amount</th>
+                        <td>{{ courier.cod_amount }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <h4>Status Updates</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Location</th>
+                    <th>Date/Time</th>
+                    <th>Additional Info</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for status in statuses %}
+                <tr>
+                    <td>{{ status.status }}</td>
+                    <td>{{ status.location_branch.name }}</td>
+                    <td>{{ status.timestamp }}</td>
+                    <td>
+                        {% if status.additional_info %}
+                        {{ status.additional_info }}
+                        {% else %}
+                        No additional information
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No status updates available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a class="btn btn-primary" href="{% url 'create_courier_status' courier_id=courier.id %}">Update Status</a>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}Recieved Orders - Sajha Courier{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-5">Received Orders</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tracking Id</th>
+                <th>Sender Name</th>
+                <th>Receiver Name</th>
+                <th>Destination</th>
+                <th>Remark</th>
+                <th>POD</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for courier in couriers %}
+            {% if courier.latest_status.status == "Received by" and courier.latest_status.updated_by.id == user.id %}
+            <tr>
+                <td>{{ courier.id }}</td>
+                <td>{{ courier.tracking_id }}</td>
+                <td>{{ courier.vendor_name }}</td>
+                <td>{{ courier.customer_name }}</td>
+                <td>{{ courier.destination }}</td>
+
+                <form method="POST" action="{% url 'deliver_this' courier.id %}" enctype="multipart/form-data" style="display:inline;">
+                    {% csrf_token %}
+                    <td>
+                        <input id="additional_info" name="additional_info" type="text">
+                    </td>
+                    <td>
+                        <input id="PODimage" name="PODimage" type="file">
+                    </td>                    
+                    <td>
+                        <input type="hidden" name="status" value="Delivered">
+                        <input type="hidden" name="location_branch" id="location_branch_input" value="{{ request.user.branch_name.id }}">
+                        <button type="submit" class="btn btn-success btn-sm text-white" aria-label="Recieve Status">
+                            <i class="fas fa-paper-plane me-2"></i> Deliver
+                        </button>
+                    </td>
+                </form>
+            </tr>
+            {% if courier.pods.all %}
+            <tr>
+                <td colspan="8">
+                    <!-- Display POD image(s) with a link to open in popup -->
+                    {% for pod in courier.pods.all %}
+                    <a href="#" data-toggle="modal" data-target="#imageModal" data-image="{{ pod.pod_image.url }}">
+                        <img src="{{ pod.pod_image.url }}" alt="POD" width="100" height="100">
+                    </a>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endif %}
+            {% endif %}
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">No couriers available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal for displaying the image -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageModalLabel">POD Image</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img id="popupImage" src="" alt="POD Image" class="img-fluid">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    // JavaScript to handle the image click event and update the popup image source
+    $('#imageModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);  // Button that triggered the modal
+        var imageUrl = button.data('image');  // Extract info from data-* attributes
+        var modal = $(this);
+        modal.find('.modal-body #popupImage').attr('src', imageUrl);  // Set the image URL
+    });
+</script>
+{% endblock %}

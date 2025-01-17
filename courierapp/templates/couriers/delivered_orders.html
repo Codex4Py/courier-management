@@ -1,0 +1,49 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}Delivered Orders - Sajha Courier{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-5">Delivered Orders</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tracking Id</th>
+                <th>Sender Name</th>
+                <th>Receiver Name</th>
+                <th>From</th>
+                <th>Destination</th>
+                <th>Remark</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for courier in couriers %}
+            {% if courier.latest_status.status == "Delivered" and courier.latest_status.updated_by.id == user.id %}
+            <tr>
+                <td>{{ courier.id }}</td>
+                <td>{{ courier.tracking_id }}</td>
+                <td>{{ courier.vendor_name.vendor_name }}</td>
+                <td>{{ courier.customer_name }}</td>
+                <td>{{ courier.created_by.branch_name }}</td>
+                <td>{{ courier.destination.name }}</td>
+                <td>{{ courier.latest_status.additional_info }}</td>
+                <td>
+                  {% for pod in pods %}
+                      {% if pod.courier == courier %}
+                          <a href="{{ pod.pod_image.url }}"><i class="fas fa-eye me-2"></i>POD</a>
+                      {% endif %}
+                  {% endfor %}
+                </td>              
+            </tr>
+            {% endif %}
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">No couriers available</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}All Customer - Sajha Courier{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form method="get" action="{% url 'customer_list' %}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="search_query" value="{{ search_query }}" class="form-control" placeholder="Search Couriers..." aria-label="Search">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+        
+        <div class="d-flex justify-content-end mb-0">
+            <a href="{% url 'add_customer' %}" class="btn btn-primary">Add Customer</a>
+        </div>
+        
+        <!-- Couriers Table -->
+        <h2 class="mt-0">All Customers</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr style="text-align: center;">
+                    <th>Sr.No.</th>
+                    <th>Customer Name</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                    {% if customer.created_by == request.user %}
+                    <tr>
+                        <td scope="row" style="text-align: center;">{{ forloop.counter }}</td>
+                        <td>{{ customer.vendor_name }}</td>
+                        <td style="text-align: center;">{{ customer.vendor_phone }}</td>
+                        <td>{{ customer.vendor_address }}</td>
+                    </tr>
+                    {% endif %}
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No Customer available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>                                                  
+        </table>
+    </div>
+{% endblock %}

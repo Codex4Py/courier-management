@@ -1,0 +1,70 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}My Bookings - Sajha Courier{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form method="get" action="{% url 'all_couriers_list' %}" class="mb-4">
+            <div class="input-group">
+                <!-- For search by name -->
+                <input type="text" name="name" value="{{ request.GET.name }}" class="form-control" placeholder="Search by Customer Name" aria-label="Search by Customer Name">
+                
+                <!-- Or search by tracking ID -->
+                <input type="text" name="id" value="{{ request.GET.id }}" class="form-control" placeholder="Search by Tracking ID" aria-label="Search by Tracking ID">
+
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+
+        <!-- Couriers Table -->
+        <h2 class="mt-5">My Bookings</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tracking Id</th>
+                    <th>Sender Name</th>
+                    <th>Receiver Name</th>
+                    <th>From</th>
+                    <th>Destination</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for courier in couriers %}
+                {% if courier.created_by.username == request.user.username %}
+                <tr>
+                        <td>{{ courier.id }}</td>
+                        <td>{{ courier.tracking_id }}</td>
+                        <td>{{ courier.vendor_name.vendor_name }}</td>
+                        <td>{{ courier.customer_name }}</td>
+                        <td>{{ courier.created_by.branch_name }}</td>
+                        <td>{{ courier.destination.name }}</td>
+
+                        <!-- Display the latest status of the current courier -->
+                        <td>
+                            {% if courier.latest_status %}
+                                <p>{{ courier.latest_status.status }}</p>
+                            {% else %}
+                                <p>Booked | No Update</p>
+                            {% endif %}
+                        </td>
+                        <td>{{ courier.order_date|date:"Y-m-d" }}</td>
+                        <td>
+                            <a href="{% url 'courier_details' courier.id %}" class="btn btn-primary btn-sm text-white" aria-label="View Courier">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endif %}
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No couriers available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

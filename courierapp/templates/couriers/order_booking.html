@@ -1,0 +1,148 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}Order Booking - Sajha Courier{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <h1>Order Booking</h1>
+    <form method="POST" action="{% url 'order_booking_main' %}">
+        {% csrf_token %}
+       
+        <!-- Destination Selection -->
+        <div class="form-group">
+            <label for="destination">Select Destination:</label>
+            <select class="form-control" id="destination" name="destination" required>
+                <option value="">Select a Destination</option>
+                {% for branch in branches %}
+                    <option value="{{ branch.id }}">{{ branch.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="vender_name">Select a Sender (Vendor):</label>
+            <select class="form-control" id="vender_name" name="vender_name" required>
+                <option value="">Select a Sender</option>
+                {% for vender in senders %}
+                    <option value="{{ vender.id }}">{{ vender.vendor_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="customer_name">Reciever Name:</label>
+                    <input type="text" class="form-control" name="customer_name" id="customer_name" required>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="customer_phone">Reciever Phone:</label>
+                    <input type="text" class="form-control" name="customer_phone" id="customer_phone" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="customer_address">Reciever Address:</label>
+            <textarea class="form-control" name="customer_address" id="customer_address" required></textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="customer_alt_phone">Reciever Alternate Phone:</label>
+                    <input type="text" class="form-control" name="customer_alt_phone" id="customer_alt_phone">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="order_type">Order Type:</label>
+                    <select type="text" class="form-control" name="order_type" id="order_type">
+                        <option value="Cash">Cash</option>
+                        <option value="COD">Cash On Delivery</option>
+                        <option value="Credit">Credit</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="package_name">Package Name:</label>
+            <input type="text" class="form-control" name="package_name" id="package_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="order_weight">Weight:</label>
+            <input type="number" class="form-control" name="order_weight" id="order_weight" required oninput="calculateTotal()">
+        </div>
+
+        <div class="form-group">
+            <label for="rate">Rate(Per kg):</label>
+            <input type="number" class="form-control" name="rate" id="rate" required oninput="calculateTotal()">
+        </div>
+
+        <div class="form-group">
+            <label for="service_charge">Service Charge:</label>
+            <input type="number" class="form-control" name="service_charge" id="service_charge" required oninput="calculateTotal()">
+        </div>
+
+        <!-- Total Amount Calculation -->
+        <div class="form-group">
+            <label for="total_amount">Total Amount:</label>
+            <input type="number" class="form-control" name="total_amount" id="total_amount" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="delivery_type">Delivery Type:</label>
+            <input type="text" class="form-control" name="delivery_type" id="delivery_type" required>
+        </div>
+
+        <div class="form-group">
+            <label for="reference">Reference:</label>
+            <input type="text" class="form-control" name="reference" id="reference" required>
+        </div>
+
+        <div class="form-group">
+            <label for="instruction">Special Instructions:</label>
+            <textarea class="form-control" name="instruction" id="instruction"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="cod_amount">COD Amount:</label>
+            <input type="number" class="form-control" name="cod_amount" id="cod_amount">
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">Book Order</button>
+    </form>
+</div>
+
+<script>
+    function calculateTotal() {
+        // Get the values for weight, rate, and service charge
+        var weight = parseFloat(document.getElementById('order_weight').value) || 0;
+        var rate = parseFloat(document.getElementById('rate').value) || 0;
+        var serviceCharge = parseFloat(document.getElementById('service_charge').value) || 0;
+
+        // Calculate the total amount: (rate * weight) + service charge
+        var totalAmount = (rate * weight) + serviceCharge;
+
+        // Set the total amount value in the total_amount input field
+        document.getElementById('total_amount').value = totalAmount.toFixed(2);
+    }
+</script>
+
+{% endblock %}

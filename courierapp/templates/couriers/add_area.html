@@ -1,0 +1,31 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}Add Area - Sajha Courier{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Add Area</h1>
+        <form method="POST">
+            {% csrf_token %}
+            
+              <!-- Branch Dropdown -->
+              <div class="form-group">
+                <label for="branch">Select Branch:</label>
+                <select class="form-control" name="branch" id="branch" required>
+                    <option value="">Select a Branch</option>
+                    {% for branch in branches %}
+                        <option value="{{ branch.id }}">{{ branch.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Area Name Field -->
+            <div class="form-group">
+                <label for="area_name">Area Name:</label>
+                <input type="text" class="form-control" name="area_name" id="area_name" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary mt-2">Add Area</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}Profile - Sajha Courier{% endblock %}
+
+{% block content %}
+<style>
+    h4 {
+        font-family: 'Times New Roman', Times, serif;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 8px 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        font-weight: bold;
+    }
+</style>
+<div class="container mt-4">
+    <h2>Your Profile</h2>
+    <table>
+        <tr>
+            <th>Name:</th>
+            <td>{{ request.user.username }}</td>
+        </tr>
+        <tr>
+            <th>Full Name:</th>
+            <td>{{ request.user.full_name }}</td>
+        </tr>
+        <tr>
+            <th>Phone:</th>
+            <td>{{ request.user.phone_number }}</td>
+        </tr>
+        <tr>
+            <th>Email:</th>
+            <td>{{ request.user.email }}</td>
+        </tr>
+        <tr>
+            <th>Working Area:</th>
+            <td>{{ request.user.working_area }}</td>
+        </tr>
+        <tr>
+            <th>Branch:</th>
+            <td>{{ request.user.branch_name }}</td>
+        </tr>
+        <tr>
+            <th>Joined:</th>
+            <td>{{ request.user.date_joined }}</td>
+        </tr>
+    </table>
+</div>
+<button class="btn btn-primary">
+    <a href="{% url 'UserUpdateView' %}" class="text-white text-decoration-none">Update Profile</a>
+</button>
+{% endblock %}

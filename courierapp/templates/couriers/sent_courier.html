@@ -1,0 +1,23 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}Sent Courier - Sajha Courier{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Send Courier</h1>
+    <div class="mb-3">
+        <label for="location_branch" class="form-label">Location to Send</label>
+        <select id="location_branch" name="location_branch" class="form-select" required>
+            <option value="">Select Location</option>
+            {% for branch in branches %}
+                <option value="{{ branch.id }}" {% if branch.id == request.POST.location_branch %}selected{% endif %}>{{ branch.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <form method="POST" action="{% url 'sent_courier' courier.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Send Courier</button>
+    </form>
+</div>
+{% endblock %}

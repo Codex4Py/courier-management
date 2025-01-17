@@ -1,0 +1,99 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}Picked Orders - Sajha Courier{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <!-- Search Form -->
+        {% if error_message %}
+        <div class="error">{{ error_message }}</div>
+        {% endif %}
+        
+        <!-- Location Branch Selection -->
+        <div class="mb-4">
+            <label for="location_branch">Select Location Branch</label>
+            <select id="location_branch" name="location_branch" class="form-control">
+                {% for branch in branches %}
+                    <option value="{{ branch.id }}" {% if branch.name == 'Kathmandu' %}selected{% endif %}>
+                        {{ branch.name }}
+                    </option>
+                {% endfor %}
+            </select>            
+        </div>
+
+        <h2 class="mt-5">Picked Orders</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tracking Id</th>
+                    <th>Sender Name</th>
+                    <th>Receiver Name</th>
+                    <th>From</th>
+                    <th>Destination</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for courier in couriers %}
+                {% if courier.latest_status.status == "Packed for" and courier.latest_status.updated_by.username == user.username %}
+                    <tr>
+                        <td>{{ courier.id }}</td>
+                        <td>{{ courier.tracking_id }}</td>
+                        <td>{{ courier.vendor_name }}</td>
+                        <td>{{ courier.customer_name }}</td>
+                        <td>{{ courier.created_by.branch_name }}</td>
+                        <td>{{ courier.destination }}</td>
+            
+                        <!-- Display the latest status of the current courier -->
+                        <td>
+                            {% if courier.latest_status %}
+                                <p>{{ courier.latest_status.status }} </p>
+                            {% else %}
+                                <p>Booked By - {{ courier.created_by.full_name }}</p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'courier_details' courier.id %}" class="btn btn-primary btn-sm text-white" aria-label="View Courier">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'update_courier_status' courier.id %}" class="btn btn-info btn-sm text-white" aria-label="Update Courier Status">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                             <!-- Updated Sent to button -->
+                             <form method="POST" action="{% url 'sent_this' courier.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="status" value="Sent to">
+                                <input type="hidden" name="additional_info" value="">
+
+                                <!-- Dynamic location_branch select -->
+                                <input type="hidden" name="location_branch" id="location_branch_input" value="{{ request.GET.location_branch }}">
+
+                                <button type="submit" class="btn btn-success btn-sm text-white" aria-label="Sent Status">
+                                    <i class="fas fa-paper-plane"></i> Send
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">No couriers available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // JavaScript to dynamically update hidden location branch input based on dropdown selection
+        document.getElementById("location_branch").addEventListener("change", function() {
+            var selectedBranch = this.value;
+            document.getElementById("location_branch_input").value = selectedBranch;
+        });
+
+        // Set the initial value of the hidden input field when the page loads
+        document.getElementById("location_branch_input").value = document.getElementById("location_branch").value;
+    </script>
+{% endblock %}

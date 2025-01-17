@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% block title %}Track Courier - Sajha Courier{% endblock %}
+{% block content %}
+{% load custom_filters %}
+<!-- Header and Navigation are already handled in base.html -->
+
+<h2 class="mt-5">Track Courier</h2>
+
+<!-- Display messages -->
+{% if messages %}
+<div class="alert alert-danger">
+    {% for message in messages %}
+    <p>{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+<form method="GET" class="mb-4">
+    <div class="mb-3">
+        <label for="tracking_number" class="form-label">Enter Tracking Number</label>
+        <input type="text" class="form-control" id="tracking_number" name="tracking_number" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Track</button>
+</form>
+
+{% if courier %}
+<h4>Shipment Information for {{ courier.tracking_id }}</h4>
+<table class="table table-bordered">
+    <tbody>
+        <tr>
+            <th>Tracking ID</th>
+            <td>{{ courier.tracking_id }}</td>
+        </tr>
+        <tr>
+            <th>Destination</th>
+            <td>{{ courier.destination }}</td>
+        </tr>
+        <tr>
+            <th>Order Date</th>
+            <td>{{ courier.order_date }}</td>
+        </tr>
+        <tr>
+            <th>Package Name</th>
+            <td>{{ courier.package_name }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="mt-4">
+    <h4>Current Status</h4>
+    <p>Status: <strong>{{ shipment_status }}</strong></p>
+</div>
+
+<div class="mt-4">
+    <h4>Status Updates</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Location</th>
+                    <th>Timestamp</th>
+                    <th>Additional Info</th>
+                    <th>POD</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for status in statuses %}
+                <tr>
+                    <td>{{ status.status }}</td>
+                    <td>{{ status.location_branch.name }}</td>
+                    <td>{{ status.timestamp }}</td>
+                    <td>
+                        {% if status.additional_info %}
+                        {{ status.additional_info }}
+                        {% else %}
+                        No additional information
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% for pod in pods %}
+                        {% if pod.courier == courier %}
+                        <a href="{{ pod.pod_image.url }}"><i class="fas fa-eye me-2"></i>POD</a>
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No status updates available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Flowchart to visualize status -->
+<div class="container">
+    <div class="flow-container">
+        {% with current_step=flow_steps|get_current_step:shipment_status %}
+        {% for step, label in flow_steps.items %}
+        <div class="step-wrapper">
+            <div class="step{% if forloop.counter <= current_step %} active{% endif %}">
+                {{ label }}
+            </div>
+            {% if not forloop.last %}
+            <div class="arrow{% if forloop.counter <= current_step %} active{% endif %}">→</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endwith %}
+    </div>
+</div>
+{% elif tracking_number %}
+<div class="alert alert-danger mt-4">
+    No courier found with the tracking number: <strong>{{ tracking_number }}</strong>
+</div>
+{% endif %}
+
+<!-- Hero Section -->
+<section class="hero bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4">Fast and Reliable Courier Services</h1>
+        <p class="lead">Your parcels delivered on time, every time!</p>
+        <a href="#services" class="btn btn-light btn-lg">Discover Our Services</a>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Our Services</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="/media/courier_site_img/image_courier1.jpg" class="card-img-top" alt="Express Delivery">
+                    <div class="card-body">
+                        <h5 class="card-title">Express Delivery</h5>
+                        <p class="card-text">Get your parcel delivered in 24 hours with our express service.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="/media/courier_site_img/courier2.avif" class="card-img-top" alt="Tracking Services">
+                    <div class="card-body">
+                        <h5 class="card-title">Package Tracking</h5>
+                        <p class="card-text">Track your parcel in real-time with our advanced tracking system.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="/media/courier_site_img/new_courier.png" class="card-img-top" alt="Global Shipping">
+                    <div class="card-body">
+                        <h5 class="card-title">Global Shipping</h5>
+                        <p class="card-text">We offer international shipping to over 100 countries.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta bg-dark text-white text-center py-5">
+    <div class="container">
+        <h2 class="display-4">Ready to Ship with Us?</h2>
+        <p class="lead">Get your parcel delivered safely and on time. Book your shipment now!</p>
+        <a href="/login" class="btn btn-light btn-lg">Get Started</a>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Contact Us</h2>
+        <p class="text-center">Have any questions? Reach out to us for support.</p>
+        <div class="text-center">
+            <a href="mailto:ytnarottam@gamil.com" class="btn btn-primary">Email Support</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .step {
+        background-color: #e0e0e0;
+        color: #000;
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 14px;
+        opacity: 0.6;
+    }
+
+    .step.active {
+        background-color: #007BFF;
+        color: white;
+        opacity: 1;
+    }
+
+    .arrow {
+        font-size: 24px;
+        color: #007BFF;
+        margin-top: 30px;
+        opacity: 0.6;
+    }
+
+    .arrow.active {
+        opacity: 1;
+    }
+
+    .flow-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .step-wrapper {
+        display: flex;
+        align-items: center;
+        margin: 10px;
+    }
+</style>
+
+{% endblock %}

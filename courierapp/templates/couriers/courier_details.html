@@ -1,0 +1,94 @@
+{% extends 'couriers/base.html' %}
+{% block title %}Courier Details - Sajha Courier{% endblock %}
+{% block content %}
+<!-- Container for printable content -->
+<div id="printableArea" style="border: 1px dashed black; padding: 20px; font-family: Arial, sans-serif; max-width: 70vw; margin: auto;">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; border: black solid 1px; padding: 7px;">
+        <div>
+            <p><strong>Order ID:</strong> {{ courier.id }}  </br> <strong>Tracking ID:</strong>{{ courier.tracking_id }}</p>
+        </div>
+        <div>
+            <p style="text-align: right; font-size: 1.5em; font-weight: bold;">
+            {{ courier.created_by.branch_name }} <strong>To - </strong> {{ courier.destination }}
+            </p>
+        </div>
+    </div>
+    <hr style="border: none; border-top: 1px dashed black;">
+    <div style="display: flex; margin-top: 20px;">
+        <div style="width: 30%; line-height: 1;">
+            <p><strong>Order Type :</strong> {{ courier.order_type }}</p>
+            <p><strong>Delivery Type :</strong> {{ courier.delivery_type }}</p>
+            <p><strong>Order Date :</strong> {{ courier.order_date }}</p>
+            <p><strong>Package Name :</strong> {{ courier.package_name }}</p>
+            <p><strong>Reference :</strong> {{ courier.reference }}</p>
+            <p><strong>Instruction :</strong> {{ courier.instruction }}</p>
+
+            <h4 style="margin-top: 20px;">Your Logistics Partner</h4>
+            <h5 style="font-family: 'Times New Roman', Times, serif">Sajha Courier & Cargo <br> 
+                Mo. 01-5706789 | 01-5705373</h5>
+        </div>
+        <div style="width: 20%; text-align: center;">
+            <!-- Barcode container -->
+            <div style="border: 1px solid black; padding: 10px; display: inline-block;">
+                <svg id="barcode"></svg> <!-- This will hold the barcode -->
+            </div>
+        </div>
+        <div style="width: 50%; text-align: left;">
+            <div style="line-height: 1;">
+                <p><strong>Sender :</strong> {{ courier.vendor_name.vendor_name }}</p> <!-- Access vendor_name from the related Customer model -->
+                <p><strong>Sender Phone :</strong> {{ courier.vendor_name.vendor_phone }}</p> <!-- Access phone from the related Customer model -->
+                <p><strong>Sender Alt. Phone :</strong> {{ courier.vendor_name.vendor_alt_phone }}</p> <!-- Access alt_phone -->
+                <p><strong>Sender Address :</strong> {{ courier.vendor_name.vendor_address }}</p> <!-- Access address -->
+                <p><strong>Weight :</strong> {{ courier.weight }}  | <strong> Amount: </strong> {{ courier.total_amount }} </p>
+                <p><strong>Customer :</strong> {{ courier.customer_name }}</p>
+                <p><strong>Address :</strong> {{ courier.customer_address }}</p>
+                <p><strong>Phone :</strong> {{ courier.customer_phone }}</p>
+                <p><strong>Alt. Phone :</strong> {{ courier.customer_alt_phone }}</p>
+                <p><strong>COD Amount :</strong> Rs. {{ courier.cod_amount }}</p>
+            </div>
+        </div>
+    </div>
+    <hr style="border: none; border-top: 1px dashed black;">
+</div>
+
+<!-- Print Button -->
+<div style="text-align: center; margin-top: 20px;">
+    <!-- Print Details Button -->
+    <button onclick="printDiv('printableArea');" style="padding: 12px 24px; font-size: 1.1em; background-color: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 5px; transition: background-color 0.3s;">
+        Print Details
+    </button>
+    
+    <!-- Update Button -->
+     {% if courier.created_by.username == request.user.username %}
+    <button style="padding: 12px 24px; font-size: 1.1em; background-color: #00CBCD; color: white; border: none; cursor: pointer; border-radius: 5px; transition: background-color 0.3s;">
+        <a href="{% url 'update_order' %}?courier_id={{ courier.id }}" style="color: white; text-decoration: none;">Update</a>
+    </button>
+    {% endif %}
+</div>
+
+
+<!-- Include JsBarcode script from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+
+<script>
+    // Generate barcode using the courier.id once the window has loaded
+    window.onload = function() {
+        JsBarcode("#barcode", "{{ courier.id }}", {
+            format: "CODE128",   // Barcode format
+            width: 2,            // Width of the barcode lines
+            height: 100,         // Height of the barcode
+            displayValue: true,  // Display the value below the barcode
+            fontSize: 20         // Font size for the displayed value
+        });
+    };
+
+    // Function to print the content
+    function printDiv(divId) {
+        var printContents = document.getElementById(divId).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+</script>
+{% endblock content %}

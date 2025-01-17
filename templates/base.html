@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS (optional) -->
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar (Navigation) -->
+    {% include "users/header.html" %}
+    <!-- Main Content -->
+    <div class="container mt-4">
+        {% block content %}
+        <!-- Content will be inserted here in the child templates -->
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer style="background-color: rgb(4, 100, 100);" class="text-white text-center py-2 mt-4">
+        <p>&copy; 2025 Courier Service | Codex - 9824811330</p>
+    </footer>
+
+    <!-- Bootstrap JS and Popper.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

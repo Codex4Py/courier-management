@@ -1,0 +1,123 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}Dashboard - Sajha Courier{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Courier Management Dashboard</h2>
+    <!-- Dashboard Overview -->
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-4">
+                <div class="card-header">Total Couriers</div>
+                <div class="card-body">
+                    <h5 class="card-title"> {{ all_couriers }} </h5>
+                    <p class="card-text">Total Couriers Booked</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-4">
+                <div class="card-header"> Total Pendings </div>
+                <div class="card-body">
+                    <h5 class="card-title"> {{ pending_couriers }} </h5>
+                    <p class="card-text">Pending Couriers.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-4">
+                <div class="card-header">Total Delivered</div>
+                <div class="card-body">
+                    <h5 class="card-title"> {{ done_couriers }} </h5>
+                    <p class="card-text">Courier delivered successfully.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Deliveries Table -->
+    <div class="mt-4">
+        <h4>Recent Deliveries</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Sender</th>
+                    <th scope="col">Receiver</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for courier in couriers %}
+                <tr>
+                    <td scope="row"> {{ forloop.counter }} </td>
+                    <td> {{ courier.vendor_name }} </td>
+                    <td> {{ courier.customer_name }} </td>
+                    <td>
+                        <span class="badge 
+                            {% if courier.latest_status %}
+                                {% if courier.latest_status.status == 'Booked by' %}
+                                    bg-primary
+                                {% elif courier.latest_status.status == 'Cancel' %}
+                                    bg-danger
+                                {% elif courier.latest_status.status == 'Packed for' %}
+                                    bg-info
+                                {% elif courier.latest_status.status == 'Received by' %}
+                                    bg-warning
+                                {% elif courier.latest_status.status == 'Sent to' %}
+                                    bg-secondary
+                                {% elif courier.latest_status.status == 'In destination' %}
+                                    bg-dark
+                                {% elif courier.latest_status.status == 'Out for delivery' %}
+                                    bg-warning
+                                {% elif courier.latest_status.status == 'Delivered' %}
+                                    bg-success
+                                {% else %}
+                                    bg-light
+                                {% endif %}
+                            {% else %}
+                                bg-light
+                            {% endif %}
+                        ">
+                            <p> 
+                                {% if courier.latest_status %}
+                                    {{ courier.latest_status.status }}
+                                {% else %}
+                                    <span style="color: black;"> Booked </span> 
+                                {% endif %}
+                            </p>
+                        </span>
+                    </td>
+                    <td> 
+                        {% if courier.latest_status %}
+                            {{ courier.latest_status.timestamp }} 
+                        {% else %}
+                            <p> {{ courier.order_date }} </p>
+                        {% endif %}
+                    </td>       
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-4">
+        <h4>Quick Actions</h4>
+        <div class="row">
+            <div class="col-md-4">
+                <a href="{% url 'add_shipment' %}" class="btn btn-primary w-100">Add New Shipment</a>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'track_shipment' %}" class="btn btn-info w-100">Track Shipment</a>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'view_profile' %}" class="btn btn-secondary w-100">View Profile</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

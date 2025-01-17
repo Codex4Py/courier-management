@@ -1,0 +1,40 @@
+{% extends "users/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Update Your Profile</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="full_name" class="form-label">Full Name:</label>
+            <input type="text" id="full_name" name="full_name" class="form-control" value="{{ user.full_name }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="phone_number" class="form-label">Phone Number:</label>
+            <input type="text" id="phone_number" name="phone_number" class="form-control" value="{{ user.phone_number }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="working_area" class="form-label">Working Area:</label>
+            <input type="text" id="working_area" name="working_area" class="form-control" value="{{ user.working_area }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="branch_name" class="form-label">Branch Name:</label>
+            <select id="branch_name" name="branch_name" class="form-select">
+                {% for branch in branches %}
+                    <option value="{{ branch.id }}" {% if user.branch_name_id == branch.id %}selected{% endif %}>
+                        {{ branch.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

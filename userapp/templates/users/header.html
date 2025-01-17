@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sajha Courier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: rgb(0, 217, 255);
+            /* Sky blue header */
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: rgb(0, 101, 114);
+            /* Dark cyan navigation bar */
+            display: flex;
+            justify-content: right;
+            padding: 5px;
+        }
+
+        nav a {
+            color: #fff;
+            padding: 5px 20px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: rgb(3, 161, 182);
+            /* Lighter cyan hover effect */
+        }
+
+        .main-content {
+            padding: 40px;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Welcome to Sajha Courier</h1>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        {% if user.is_authenticated %}
+        <!-- Show if the user is logged in -->
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'view_profile' %}">Profile - {{ user.branch_name }} </a>
+        <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+        <!-- Show if the user is not logged in -->
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'branch_list' %}">Branch</a>
+        <a href="{% url 'contact' %}">Contact</a>
+        <a href="{% url 'about' %}">About</a>
+        <a href="{% url 'login' %}" alt="Login"><i class="fa fa-user"></i></a>
+        <a href="{% url 'signup' %}" alt="Signup"><i class="fa fa-user-plus"></i></a>
+        {% endif %}
+    </nav>
+</body>
+
+</html>

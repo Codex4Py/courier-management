@@ -1,0 +1,38 @@
+{% extends 'couriers/base.html' %}
+
+{% block content %}
+<h2 class="my-4">Update Status for - Order ID {{ courier.id }} | <strong> {{ courier.tracking_id }}</strong>  </h2>
+
+<form method="post" class="p-4 border rounded shadow-sm">
+    {% csrf_token %}
+    
+    <!-- Status Selection -->
+    <div class="mb-3">
+        <label for="status" class="form-label">Select Status:</label>
+        <select name="status" class="form-select" required>
+            {% for choice in status_choices %}
+                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Branch Selection -->
+    <div class="mb-3">
+        <label for="location_branch" class="form-label">Select Branch:</label>
+        <select name="location_branch" class="form-select" required>
+            {% for branch in branches %}
+                <option value="{{ branch.id }}">{{ branch.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="mb-3">
+        <label for="additional_info" class="form-label">Additional Info (Optional):</label>
+        <textarea name="additional_info" class="form-control" rows="4"></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary">Update Status</button>
+</form>
+{% endblock %}

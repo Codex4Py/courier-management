@@ -1,0 +1,95 @@
+{% extends 'couriers/base.html' %}
+
+{% block title %}Track Courier - Sajha Courier{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Track Courier</h2>
+
+     <!-- Display messages -->
+     {% if messages %}
+        <div class="alert alert-danger">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="GET" class="mb-4">
+        <div class="mb-3">
+            <label for="tracking_number" class="form-label">Enter Tracking Number</label>
+            <input type="text" class="form-control" id="tracking_number" name="tracking_number" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Track</button>
+    </form>
+
+    {% if courier %}
+        <h4>Shipment Information for {{ courier.tracking_id }}</h4>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Tracking ID</th>
+                    <td>{{ courier.tracking_id }}</td>
+                </tr>
+                <tr>
+                    <th>Destination</th>
+                    <td>{{ courier.destination }}</td>
+                </tr>
+                <tr>
+                    <th>Order Date</th>
+                    <td>{{ courier.order_date }}</td>
+                </tr>
+                <tr>
+                    <th>Package Name</th>
+                    <td>{{ courier.package_name }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="mt-4">
+            <h4>Current Status</h4>
+            <p>Status: <strong>{{ shipment_status }}</strong></p>
+        </div>
+
+        <div class="mt-4">
+            <h4>Status Updates</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Location</th>
+                            <th>Timestamp</th>
+                            <th>Additional Info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for status in statuses %}
+                        <tr>
+                            <td>{{ status.status }}</td>
+                            <td>{{ status.location_branch.name }}</td>
+                            <td>{{ status.timestamp }}</td>
+                            <td>
+                                {% if status.additional_info %}
+                                {{ status.additional_info }}
+                                {% else %}
+                                No additional information
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No status updates available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% elif tracking_number %}
+        <div class="alert alert-danger mt-4">
+            No courier found with the tracking number: <strong>{{ tracking_number }}</strong>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

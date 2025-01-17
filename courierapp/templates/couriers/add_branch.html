@@ -1,0 +1,38 @@
+{% extends 'couriers/base.html' %}
+{% block title %}Add Branch - Sajha Courier{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1>Add New Branch</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <!-- Area Name Field -->
+            <div class="form-group">
+                <label for="branch_name">Branch Name:</label>
+                <input type="text" class="form-control" name="branch_name" id="branch_name" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Add Branch</button>
+        </form>
+        <div class="container">
+            <h1>Existing Branches</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Branch Name</th>
+                        <th> Action </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for branch in branches %}
+                    <tr>
+                        <td> {{ branch.name }} </td>
+                        <td>
+                            <button class="btn btn-primary">Edit</button>
+                            <button class="btn btn-danger">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>        
+    </div>
+{% endblock %}
